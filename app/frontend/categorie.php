@@ -90,26 +90,26 @@ if (isset($_POST["edit"])) {
             <input type='hidden' name="AjoutMultiple" value=''>
                 <div> 
                     <label for="nom" class="block font-medium mb-1">Nom</label>
-                    <input id="nom" name="vehicules[nom][]" type="text" placeholder="Nom du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
+                    <input id="nom" name="vehiculesname[]" type="text" placeholder="Nom du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
                 </div>
                 <div>
                     <label for="prix" class="block font-medium mb-1">Prix</label>
-                    <input id="prix" name="vehicules[prix][]" type="number" placeholder="Prix du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
+                    <input id="prix" name="vehiculesprix[]" type="number" placeholder="Prix du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
                 </div>
                 <div>
                     <label for="marque" class="block font-medium mb-1">Marque</label>
-                    <input id="marque" name="vehicules[marque][]" type="text" placeholder="Marque du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
+                    <input id="marque" name="vehiculesmarque[]" type="text" placeholder="Marque du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
                 </div>
 
                 <div>
                     <label for="model" class="block font-medium mb-1">Modèle</label>
-                    <input id="model" name="vehicules[model][]" type="text" placeholder="Modèle du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
+                    <input id="model" name="vehiculesmodel[]" type="text" placeholder="Modèle du véhicule" value="" class="inputformulaire w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" required>
                 </div>
               
 
                            <div class="col-span-2">
                 <label for="photo" class="block text-sm font-medium text-gray-700">Photo</label>
-                <input name="vehicules[imgVehicule][]" type="file" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg" required>
+                <input name="vehiculesimgVehicule[]" type="file" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg" required>
             </div>
           
             </div>
@@ -252,16 +252,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" &&  isset($_POST['valider']) && isset($
     $result = $newCategorie->ajouterCategorie();
     $id_categorie = $dbManager->getLastInsertId() ; 
     var_dump($id_categorie) ; 
-    if (isset($_POST['vehicules']['nom'])) {
-            $nom = $_POST['vehicules']['nom'];
-            $marque = $_POST['vehicules']['marque'];
-            $model = $_POST['vehicules']['model'];
-            $prix =  ($_POST['vehicules']['prix']);
 
+    if (isset($_POST['vehiculesnom'])) {
+        var_dump($_POST) ;
+        die() ; 
+            // $nom = $_POST['vehiculesnom'];
+            // $marque = $_POST['vehiculesmarque'];
+            // $model = $_POST['vehiculesmodel'];
+            // $prix =  ($_POST['vehiculesprix']);
+            // $data = [  $_POST['vehiculesnom'] ,$_POST['vehiculesmarque'] , $_POST['vehiculesmodel'] ,$_POST['vehiculesprix'] ]
           //  $uploadResult = uploadImage($_FILES['vehicules']['urlPhoto']);
           //  $urlPhoto = $uploadResult['filePath'];
 
-            $archive =0 ;
+             $archive =0 ;
         
       
         for ($i = 0; $i < count($nom); $i++) {
