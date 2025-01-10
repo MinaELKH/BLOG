@@ -105,7 +105,7 @@ $globalStats = $stats->getGlobalStatistics();
        </i>
        <div>
         <h2 class="text-xl font-bold">
-         <?php $globalStats["totalArticles"] ?>
+         <?php echo $globalStats["totalArticles"] ?>
         </h2>
         <p class="text-gray-600">
          Total des Articles 
@@ -119,7 +119,7 @@ $globalStats = $stats->getGlobalStatistics();
        </i>
        <div>
         <h2 class="text-xl font-bold">
-        <?php $globalStats["unconfirmedArticles"] ?>
+        <?php  echo  $globalStats["unconfirmedArticles"] ?>
         </h2>
         <p class="text-gray-600">
          Demandes d'articles

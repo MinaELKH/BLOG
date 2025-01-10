@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use stdClass;
+use PDO ;
 class Statistics
 {
     private $dbManager;
@@ -47,15 +49,16 @@ class Statistics
       /**
      * Retourne le nombre total de thèmes.
      */
-    public function getBestArticle(): int
+    public function getBestArticle(): stdClass  
     {
         $query = "SELECT COUNT(a.id_article) AS total  , title FROM articles a inner join comments c ON  a.id_article= c.id_article
-                    ORDER BY title desc
+                    group by title
+                    ORDER BY title asc
                     LIMIT 1 
                     ";
         $stmt = $this->dbManager->getConnection()->query($query);
-        $result = $stmt->fetch();
-        return $result['total'] ?? 0;
+        $result = $stmt->fetch(PDO::FETCH_OBJ);;
+        return $result ;
     }
 
     /**

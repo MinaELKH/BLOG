@@ -55,12 +55,9 @@ if (isset($_POST["deleteComment"])) {
             <div class="text-2xl font-bold text-indigo-900">Sada.</div>
             <nav class="flex items-center space-x-6">
                 <ul class="flex space-x-6 text-indigo-900">
-                    <li><a class="hover:text-indigo-600" href='home.php'>Home</a></li>
                     <li><a class="hover:text-indigo-600" href="theme.php">Themes</a></li>
                     <li><a class="hover:text-indigo-600" href="article.php">Articles</a></li>
-                    <li><a class="hover:text-indigo-600" href="#">Blog</a></li>
-                    <li><a class="hover:text-indigo-600" href="#">Shop</a></li>
-                    <li><a class="hover:text-indigo-600" href="#">Elements</a></li>
+                    <li><a class="hover:text-indigo-600" href="espaceClient\Dashboard.php">Mon Espace</a></li>
                 </ul>
                 <div class="relative">
                     <form action="" method="post">

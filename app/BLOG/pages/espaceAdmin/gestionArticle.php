@@ -65,8 +65,8 @@ function afficher($dbManager)
                 <input type='hidden' name='id_article' value='{$objet->id_article}'>
                 <select name='changeStatut' onchange='this.form.submit()' class='w-full bg-gray-100 border border-gray-300 rounded-lg p-2 text-sm'>
                     <option value='en attente'" . ($objet->statut === 'en attente' ? ' selected' : '') . ">En attente</option>
-                    <option value='confirmée'" . ($objet->statut === 'confirmé' ? ' selected' : '') . ">Confirmée</option>
-                    <option value='annulée'" . ($objet->statut === 'annulé' ? ' selected' : '') . ">Annulée</option>
+                    <option value='confirmé'" . ($objet->statut === 'confirmé' ? ' selected' : '') . ">Confirmée</option>
+                    <option value='annulé'" . ($objet->statut === 'annulé' ? ' selected' : '') . ">Annulée</option>
                 </select>
             </form>
            </td>

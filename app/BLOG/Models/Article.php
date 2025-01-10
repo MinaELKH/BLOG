@@ -172,16 +172,24 @@ class Article
         $condition = ['id_article' => $this->id_article];
         return $this->dbManager->update('articles', $data, $condition);
     }
-    public function changeStatut(): bool
-    {
-        $data = [
-            'statut' => $this->statut,  
-        ];
-        $condition = ['id_article' => $this->id_article];
-        // var_dump($this->dbManager->update('articles', $data, $condition));
-        // die() ;
-        return $this->dbManager->update('articles', $data, $condition);
-    }
+ 
+
+
+    public function changeStatut(string $new_statut): bool
+{
+    $query = "UPDATE articles 
+              SET statut = :new_statut 
+              WHERE id_article = :id_article";
+
+    $stmt = $this->dbManager->getConnection()->prepare($query);
+    $stmt->bindValue(':new_statut', $new_statut, PDO::PARAM_STR);
+    $stmt->bindValue(':id_article', $this->id_article, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
+
+
+
     public function archive(): bool
     {
         $data = ['archive' => '1'];

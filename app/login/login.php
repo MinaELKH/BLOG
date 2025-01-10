@@ -95,11 +95,11 @@ if (isset($_POST["connecter"]) && !empty($_POST["email"]) && !empty($_POST["pass
                 {
                   echo "<p class='text-red-500 text-center'>admin.</p>";
                   $_SESSION['role'] ="admin" ;
-                  header("location:../frontend/Dashboard.php") ;
+                  header("location:../BLOG/pages/espaceAdmin/layout.php") ;
                   exit ;
                 } else if ($user->id_role==2) {
                   $_SESSION['role'] ="client" ;
-                  header("location:../frontend/home.php") ;
+                      header("location:../BLOG/pages/theme.php") ;
                   exit ;
                 }
         
