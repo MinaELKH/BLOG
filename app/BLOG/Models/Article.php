@@ -76,6 +76,20 @@ class Article
             return false;
         }
     }
+    public function getArticles(): ?array
+    {
+        $query = "select * from detailArticle
+        where  archive =  0
+        limit 10 " ;
+        $connection = $this->dbManager->getConnection();
+        $stmt = $connection->prepare($query) ; 
+         if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+        } else {
+            return false;
+        }
+    }
+
 
     public function getArticleByIdUser(): ?array
     {
@@ -158,8 +172,17 @@ class Article
         $condition = ['id_article' => $this->id_article];
         return $this->dbManager->update('articles', $data, $condition);
     }
-
-    public function delete(): bool
+    public function changeStatut(): bool
+    {
+        $data = [
+            'statut' => $this->statut,  
+        ];
+        $condition = ['id_article' => $this->id_article];
+        // var_dump($this->dbManager->update('articles', $data, $condition));
+        // die() ;
+        return $this->dbManager->update('articles', $data, $condition);
+    }
+    public function archive(): bool
     {
         $data = ['archive' => '1'];
         $condition = ['id_article' => $this->id_article];

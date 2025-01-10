@@ -8,7 +8,8 @@ use Models\DatabaseManager;
 use Models\client;
 use Models\Theme;
 use Models\Tag;
-use Models\ArticleTags ; 
+use Models\ArticleTags;
+
 $dbManager = new DatabaseManager();
 
 $_SESSION["id_user"] = 5;
@@ -65,40 +66,39 @@ if (($_SERVER["REQUEST_METHOD"] == 'POST') && (isset($_POST["addArticle"]))) {
     $urlPhoto = $uploadResult['filePath'];
     $newArticle = new Article($dbManager,  0, $_POST['articleTitle'],  $_POST['articleContent'], $urlPhoto, intval($_POST['id_theme']),  $id_user);
     $result = $newArticle->add();
-    $id_article = $dbManager->getLastInsertId() ;
+    $id_article = $dbManager->getLastInsertId();
     // echo("id_article") ; 
     // var_dump($id_article);
     if ($result) {
-    
+
       if (!empty($_POST['tags'])) {
         // Nettoyage et traitement des tags
         $tags_input = htmlspecialchars(trim($_POST['tags']));
         $tags = array_unique(array_filter(array_map('trim', explode(',', $tags_input))));
-    
+
         foreach ($tags as $tag_name) {
-            var_dump($tag_name); // Debug: Afficher le tag traité
-            $tag = new Tag($dbManager, 0, $tag_name);
-            // Vérifier si le tag existe
-            $objetTag = $tag->getTagByName();
-            if ($objetTag === null) {
-                // Le tag n'existe pas, le créer
-                $tag->add();
-                $tag_id = $dbManager->getLastInsertId();
-            } else {
-                // Le tag existe, récupérer son ID
-                $tag_id = $objetTag->id_tag;
-            }
-    
-            // Ajouter la relation entre l'article et le tag
-            $tag_article = new ArticleTags($dbManager , $id_article, $tag_id)  ; 
-            $tag_article->linkTagToArticle();
+          var_dump($tag_name); // Debug: Afficher le tag traité
+          $tag = new Tag($dbManager, 0, $tag_name);
+          // Vérifier si le tag existe
+          $objetTag = $tag->getTagByName();
+          if ($objetTag === null) {
+            // Le tag n'existe pas, le créer
+            $tag->add();
+            $tag_id = $dbManager->getLastInsertId();
+          } else {
+            // Le tag existe, récupérer son ID
+            $tag_id = $objetTag->id_tag;
+          }
+
+          // Ajouter la relation entre l'article et le tag
+          $tag_article = new ArticleTags($dbManager, $id_article, $tag_id);
+          $tag_article->linkTagToArticle();
         }
-    }
-      else {
-      echo " l article n est pas ajouté";
+      } else {
+        echo " l article n est pas ajouté";
+      }
     }
   }
-}
 }
 
 
