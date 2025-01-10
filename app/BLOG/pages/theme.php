@@ -7,20 +7,29 @@ use Models\DatabaseManager;
 use Models\ArticleTags;
 use Models\Favorite;
 
+
+$_SESSION['id_user'] = 5;
+$id_user = $_SESSION['id_user']; 
+
+
 $dbManager = new DatabaseManager();
 
 ?>
 <!-- Add to favorite -->
 <?php
-if (isset($_POST["addFavoris"])) {
+if (isset($_POST["addFavorite"])) {
+ 
     $newFav = new Favorite($dbManager, 0,  intval($_POST['id_article']), intval($id_user));
     $newFav->add();
+    
 }
 if (isset($_POST["deleteComment"])) {
     $newFav = new Favorite($dbManager, intval($_POST['id_favorite']));
     $newFav->delete();
 }
 ?>
+
+
 <html lang="en">
 
 <head>
@@ -61,7 +70,7 @@ if (isset($_POST["deleteComment"])) {
                                 name="search"
                                 class="border border-gray-300 rounded-lg py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 placeholder="Search...">
-                            <input type="submit" name="btnsearch" style="display: none;">
+                                <input type="submit"   name="btnsearch" style="display: none;">
                             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                         </div>
                     </form>
@@ -120,79 +129,106 @@ if (isset($_POST["deleteComment"])) {
                     </div>
                 </div>
             </aside>
-
-
-            <section class="w-full lg:w-3/4 px-4 ">
-                <div class="   grid grid-cols-1 gap-4  md:grid-cols-2 gap-4  lg:grid-cols-2  ">
-
-                    <!-- Affichage des article -->
+            <section class="w-full lg:w-3/4 px-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
                     <?php
                     $newArticle = new Article($dbManager);
+
+
+
                     if (isset($_POST['search'])) {
                         $MotSearch = trim($_POST['search']);
                         $result = $newArticle->getSearch($MotSearch);
+                        // print_r($result);
+                        // die();
+
                     } else if (isset($_POST["btnShowTheme"])) {
                         $newArticle->id_theme = $_POST["btnShowTheme"];
                         $result = $newArticle->getArticleByIdTheme();
+
                     } else {
                         $newArticle->id_theme = 1; // theme numero 1 par defaut 
                         $result = $newArticle->getArticleByIdTheme();
                     }
-                    showArticle($result);
 
+                    showArticle($result);
                     ?>
 
-                    <!-- fonction d affichage -->
-                    <?php
-                    function showArticle($result)
-                    {
-                        $dbManager = new DatabaseManager();
-                        foreach ($result as $objetA) :  ?>
+<!-- fonction d affichage -->
+<?php
+function showArticle($result)
+{
+    $id_user = $_SESSION['id_user'];   // visiteur de site 
+    $dbManager = new DatabaseManager();
+    // Parcours des articles et génération du code HTML pour chaque article
+    foreach ($result as $objetA) {
+        // Utilisation d'un bloc PHP séparé dans l'HTML pour afficher dynamiquement les données
+        echo '  <article class="max-w-sm bg-white rounded-lg shadow-md overflow-hidden mb-8">
+             <form action=""  method="post">
+             <input type="hidden" name="id_article" value="' . $objetA->id_article . '">
+            
+                <div class="relative">
+                 
+                        <img alt="Article image" class="w-full h-48 object-cover" height="200" src="https://storage.googleapis.com/a1aa/image/1w7siogdbFZHCdkQTsJJ3c15b4xDwJsX8QyhqYW2s4DhbtAF.jpg" width="400"/>
+                        <div class="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-br-lg">
+                            ' . $objetA->title_theme . '
+                        </div>
+                    </div>
+                    
+                    <div class="p-4">
+                     <button name="btnShowArticle">
+                        <div class="flex items-center mb-2">
+                            <img alt="Profile picture of the author" class="w-10 h-10 rounded-full mr-3" height="40" src="https://storage.googleapis.com/a1aa/image/9iczK958z0LHApmuryvtgVI5hTtjwPFmfQJoQAqOffRJFsGoA.jpg" width="40"/>
+                            <div>
+                                <h2 class="text-lg font-semibold">
+                                    ' . $objetA->title . '
+                                </h2>
+                                <p class="text-gray-500 text-sm">
+                                    by ' . $objetA->nom_user . ' ' . $objetA->prenom_user . '
+                                </p>
+                            </div>
+                        </div>
 
-                            <article class=" bg-red-500 rounded-lg shadow-md overflow-hidden ">
-                                <form action="article.php" method="post">
-                                    <input type="hidden" name="id_article" value="<?PHP echo  $objetA->id_article ?>">
-                                    <button name="btnShowArticle">
-                                        <div class="relative">
-                                            <img alt="Article image" class="w-full h-48 object-cover" height="200" src="https://storage.googleapis.com/a1aa/image/1w7siogdbFZHCdkQTsJJ3c15b4xDwJsX8QyhqYW2s4DhbtAF.jpg" />
-                                            <div class="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-br-lg">
-                                                <?= $objetA->title_theme ?>
-                                            </div>
-                                        </div>
-                                        <div class="p-4">
-                                            <div class="flex items-center mb-2">
-                                                <img alt="Profile picture of the author" class="w-10 h-10 rounded-full mr-3" height="40" src="https://storage.googleapis.com/a1aa/image/9iczK958z0LHApmuryvtgVI5hTtjwPFmfQJoQAqOffRJFsGoA.jpg" width="40" />
-                                                <div>
-                                                    <h2 class="text-lg font-semibold">
-                                                        <?= $objetA->title  ?>
-                                                    </h2>
-                                                    <p class="text-gray-500 text-sm">
-                                                        <?= $objetA->nom_user  ?> <?= $objetA->prenom_user  ?>
-                                                    </p>
-                                                </div>
-                                            </div>
+                        <p class="text-gray-600 text-sm mb-4">
+                            ' . substr($objetA->content, 0, 150) . '...
+                        </p>
+                    </button>
+                        <div class="flex items-center justify-between text-gray-500 text-xs mb-4">
+                            <span>' . date('F j, Y', strtotime($objetA->created_at)) . '</span> 
+                            <div class="flex space-x-4"> ';
 
-                                            <p class="text-gray-600 text-sm mb-4">
-                                                <?= substr($objetA->content, 0, 150)   ?> ...
-                                            </p>
+                    $newFav = new Favorite($dbManager, 0,  intval($objetA->id_article), intval($id_user));                  
+                    $objFav = $newFav->userLikeArticle();
+      
+                 
+                     if (!empty($objFav->id_favorite)){
+                        echo'  
+                        <div class="flex items-center space-x-1   text-red-500">
 
-                                            <div class="flex items-center justify-between text-gray-500 text-xs mb-4">
-                                                <span> <?= date('F j, Y', strtotime($objetA->created_at))  ?>
+                            <i class="far fa-heart"></i>
+                          
+                        </div> ' ; 
+                     } else {
+                        echo'  
+                        <div class="flex items-center space-x-1 ">
+                        <button name="addFavorite" value="">
+                            <i class="far fa-heart"></i>
+                         </button>
+                        </div> ' ; 
+                     }
 
-                                                </span>
-                                            </div>
-                                            <div class="flex gap-4">
+                     
+                         echo' <div class="flex items-center space-x-1">
+                                    <i class="far fa-comment"></i>
+                                    <span>  ' . $objetA->total_comment . '</span>
+                                </div>
+                            ' ; 
+                            
+                    echo ' </div> </div>' ; ?>
+                      <!-- tag -->
 
-                                                <div class="flex items-center space-x-1">
-                                                    <button name="Addfavoris"><i class="far fa-heart"></i></button>
-                                                </div>
-                                                <div class="flex items-center space-x-1">
-                                                    <i class="far fa-comment"></i>
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
-                                            <div class="flex space-x-2">';
-                                                <?php $newtag = new ArticleTags($dbManager, $objetA->id_article);
+                        <div class="flex space-x-2">
+                            <?php $newtag = new ArticleTags($dbManager, $objetA->id_article);
                                                 $result = $newtag->getTagsByArticle();
                                                 if (isset($result) && !empty($result)) {
                                                     // Vérifie si chaque tag existe avant de l'afficher
@@ -206,21 +242,22 @@ if (isset($_POST["deleteComment"])) {
                                                         echo '<span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">' . $result[2]->name . '</span>';
                                                     }
                                                 } ?>
-                                            </div>
-                                        </div>
-                                    </button>
-                                </form>
-                            </article>
-                    <?php endforeach;
-                    } ?>
+                        </div>
+
+                    </div>
+                       
+                    
+                </form>
+                </article>
+  <?php    
+    }
+} ?>
 
 
 
                 </div>
 
-
-
-                 <!--pagination -->
+                <!-- pagination -->
                 <div class="mt-8 flex justify-center">
                     <nav class="inline-flex space-x-2">
                         <a class="px-4 py-2 bg-indigo-900 text-white rounded-lg" href="#">
@@ -237,7 +274,6 @@ if (isset($_POST["deleteComment"])) {
                         </a>
                     </nav>
                 </div>
-
             </section>
         </div>
     </main>

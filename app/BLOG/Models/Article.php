@@ -11,6 +11,7 @@ class Article
     private ?string $content;
     private ?int $id_user;
     private ?int $id_theme;
+    private ?string $photo;
     private ?string $statut;
     private ?string $archive;
     private ?string $created_at ;
@@ -20,6 +21,7 @@ class Article
         ?int $id_article = null,
         ?string $title = null,
         ?string $content = null,
+        ?string $photo = null,
         ?int $id_theme = null,
         ?int $id_user = null,
         ?string $statut = 'en attente',
@@ -30,6 +32,7 @@ class Article
         $this->id_article = $id_article;
         $this->title = $title;
         $this->content = $content;
+        $this->photo = $photo;
         $this->id_theme = $id_theme;
         $this->id_user = $id_user;
         $this->statut = $statut;
@@ -44,13 +47,43 @@ class Article
     }
 
 
+    
+    public function getArticleById(): ?array
+    {
+        $query = "select * from article
+        where id_article = :id_article archive =  0 " ;
+        $connection = $this->dbManager->getConnection();
+        $stmt = $connection->prepare($query) ; 
+        $stmt->bindValue(":id_article", $this->id_article, PDO::PARAM_INT);
+         if ($stmt->execute()) {
+            return $stmt->fetch(PDO::FETCH_OBJ);
+        } else {
+            return false;
+        }
+    }
+
+
     public function getArticleByIdTheme(): ?array
     {
         $query = "select * from detailArticle
-        where id_theme = :id_theme" ;
+        where id_theme = :id_theme and archive =  0 " ;
         $connection = $this->dbManager->getConnection();
         $stmt = $connection->prepare($query) ; 
         $stmt->bindValue(":id_theme", $this->id_theme, PDO::PARAM_STR);
+         if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+        } else {
+            return false;
+        }
+    }
+
+    public function getArticleByIdUser(): ?array
+    {
+        $query = "select * from detailArticle
+        where id_user = :id_user  and archive =  0 " ;
+        $connection = $this->dbManager->getConnection();
+        $stmt = $connection->prepare($query) ; 
+        $stmt->bindValue(":id_user", $this->id_user, PDO::PARAM_INT);
          if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_OBJ);
         } else {
@@ -61,7 +94,8 @@ class Article
     public function getDetailArticle(): ?stdClass 
     {
         $query= "select * from detailArticle
-                  where id_article = :id_article" ;
+                  where id_article = :id_article
+                  and archive =  0 " ;
         $db = $this->dbManager->getConnection()  ;
         $stmt = $db->prepare($query) ;
         $stmt->bindParam(":id_article" , $this->id_article , PDO::PARAM_INT) ; 
@@ -84,7 +118,8 @@ class Article
              ar.title LIKE :MotSearch OR 
              ar.content LIKE :MotSearch OR 
              tg.name LIKE :MotSearch OR 
-             th.name LIKE :MotSearch
+             th.name LIKE :MotSearch and 
+             archive =  0 
          LIMIT 10 OFFSET 0" ;
 
             $db = $this->dbManager->getConnection()  ;

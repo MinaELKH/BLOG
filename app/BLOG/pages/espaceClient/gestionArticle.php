@@ -9,23 +9,19 @@ use Models\DatabaseManager;
 use Models\client ;
 use Models\Theme;
 
+
+$_SESSION["id_user"]=5;
+$id_user = $_SESSION["id_user"];
+
+
 $dbManager = new DatabaseManager();
 $objArticle = new Article($dbManager);
 $actionEdit = false;
 
-if(isset($_POST["edit"]) ){
-    $actionEdit=true ;
-    $id =$_POST['edit'];
-    $newArticle = new Article($dbManager , $id );
-    $objArticle  = $newArticle->getById($id) ;
 
-    if ($objArticle) { 
-        //header("Location: Article.php");
-        //exit; 
-    } else {
-        echo "<p>Erreur : Remplissage de formulaire  </p>";
-    }
-}
+
+
+
 
 
 function uploadImage($file, $uploadsDir = 'uploads/', $maxSize = 2 * 1024 * 1024, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif']) {
@@ -112,9 +108,9 @@ if (isset($_POST["delete"])) {
     echo "id : ".$id;
            $dbManager = new DatabaseManager();
            $newArticle = new Article($dbManager , $id);
-            $result= $newArticle->supprimerArticle();
+            $result= $newArticle->delete();
             if ($result) { 
-                header("Location: Article.php");
+                header("Location: gestionArticle.php");
                 exit; 
             } else {
                 echo "<p>Erreur : delete </p>";
@@ -123,34 +119,32 @@ if (isset($_POST["delete"])) {
 // Afficher les clients
 affiche() ; 
 function affiche() {
+    $id_user = $_SESSION["id_user"];
     $dbManager = new DatabaseManager();
     $newArticle = new Article($dbManager);
-    $result = $newArticle->getAll(); 
+    $newArticle->id_user = $id_user ; // visiteur  
+    $result = $newArticle->getArticleByIdUser(); 
     if ($result) {
         echo "<div class='listeTable'><table border='1'>";
         echo "<tr>
                 <th>ID</th>
                 <th>Titre</th>
                 <th>Content</th>
-                <th>User</th>
                 <th>Statut</th>
                 <th>Action</th>
               </tr>";
         
         foreach ($result as $objet) {
             // Utilisation des propriétés adaptées à la table Article
-            $id = $objet->id_Article;
-            $disponibilite = $objet->disponibilite === '1' ? 'Disponible' : 'Indisponible';
+            $id = $objet->id_article;
 
             echo "<tr>
-                <td>{$objet->id_Article}</td>
+                <td>{$objet->id_article}</td>
                 <td>{$objet->title}</td>
-                <td>{$objet->content}</td>
-                <td>{$objet->}</td>
-                <td>{$objet->prix}</td>
-                <td>{$objet->id_categorie}</td>
+                <td>".substr($objet->content, 0, 150)."</td>
+                <td>{$objet->title_theme}</td>
                 <td>
-                    <form action='Article.php' method='post'>
+                    <form action='' method='post'>
                         <div class='flex'>
                             <button type='submit' name='delete' value='$id'>
                                 <span class='text-red-400 cursor-pointer material-symbols-outlined'>
@@ -224,7 +218,7 @@ function affiche() {
 
 
 
-?>
+
 <?php
 $content = ob_get_clean(); 
 include 'layout.php'; 
