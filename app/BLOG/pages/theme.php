@@ -199,8 +199,6 @@ function showArticle($result)
 
                     $newFav = new Favorite($dbManager, 0,  intval($objetA->id_article), intval($id_user));                  
                     $objFav = $newFav->userLikeArticle();
-      
-                 
                      if (!empty($objFav->id_favorite)){
                         echo'  
                         <div class="flex items-center space-x-1   text-red-500">
@@ -216,9 +214,7 @@ function showArticle($result)
                          </button>
                         </div> ' ; 
                      }
-
-                     
-                         echo' <div class="flex items-center space-x-1">
+                      echo' <div class="flex items-center space-x-1">
                                     <i class="far fa-comment"></i>
                                     <span>  ' . $objetA->total_comment . '</span>
                                 </div>
@@ -226,7 +222,6 @@ function showArticle($result)
                             
                     echo ' </div> </div>' ; ?>
                       <!-- tag -->
-
                         <div class="flex space-x-2">
                             <?php $newtag = new ArticleTags($dbManager, $objetA->id_article);
                                                 $result = $newtag->getTagsByArticle();
@@ -243,18 +238,12 @@ function showArticle($result)
                                                     }
                                                 } ?>
                         </div>
-
                     </div>
-                       
-                    
                 </form>
                 </article>
   <?php    
     }
 } ?>
-
-
-
                 </div>
 
                 <!-- pagination -->

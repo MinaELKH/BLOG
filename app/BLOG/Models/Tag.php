@@ -3,7 +3,7 @@ namespace Models;
 
 use Models\DatabaseManager;
 use stdClass;
-
+use PDO ; 
 class Tag
 {
     private DatabaseManager $dbManager;
@@ -29,11 +29,19 @@ class Tag
         return $this->dbManager->selectAll('tags', $params);
     }
 
-    public function getById($id): ?stdClass
-    {
-        $params = ['id_tag' => $id];
-        return $this->dbManager->selectById('tags', $params);
+
+    public function getTagByName(): ?stdClass
+{
+    $query = "SELECT * FROM tags WHERE name = :name AND archive = 0";
+    $connection = $this->dbManager->getConnection();
+    $stmt = $connection->prepare($query);
+    $stmt->bindValue(":name", $this->name, PDO::PARAM_STR);
+    if ($stmt->execute()) {
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return $result ?: null; // Retourne null si aucun tag trouvé
     }
+    return null;
+}
 
     public function add(): bool
     {
@@ -56,5 +64,10 @@ class Tag
         $data = ['archive' => '1'];
         $condition = ['id_tag' => $this->id_tag];
         return $this->dbManager->update('tags', $data, $condition);
+    }
+
+
+    public function __set($name , $value){
+        $name  = $value ; 
     }
 }

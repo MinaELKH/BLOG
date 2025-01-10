@@ -32,15 +32,8 @@ class ArticleTags
         return $this->dbManager->insert('article_tags', $data);
     }
 
-    public function unlinkTagFromArticle(): bool
-    {
-        $condition = [
-            'id_article' => $this->id_article,
-            'id_tag' => $this->id_tag,
-        ];
-        return $this->dbManager->delete('article_tags', $condition);
-    }
 
+// &ffiche les tag dans l article
     public function getTagsByArticle(): array
     {
        $query = "select t.id_tag ,name from tags t 

@@ -50,8 +50,8 @@ class Article
     
     public function getArticleById(): ?array
     {
-        $query = "select * from article
-        where id_article = :id_article archive =  0 " ;
+        $query = "select * from articles
+        where id_article = :id_article  and archive =  0 " ;
         $connection = $this->dbManager->getConnection();
         $stmt = $connection->prepare($query) ; 
         $stmt->bindValue(":id_article", $this->id_article, PDO::PARAM_INT);
@@ -119,7 +119,7 @@ class Article
              ar.content LIKE :MotSearch OR 
              tg.name LIKE :MotSearch OR 
              th.name LIKE :MotSearch and 
-             archive =  0 
+             ar.archive =  0 
          LIMIT 10 OFFSET 0" ;
 
             $db = $this->dbManager->getConnection()  ;

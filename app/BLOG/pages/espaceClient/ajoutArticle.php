@@ -7,7 +7,8 @@ use Models\Article;
 use Models\DatabaseManager;
 use Models\client;
 use Models\Theme;
-
+use Models\Tag;
+use Models\ArticleTags ; 
 $dbManager = new DatabaseManager();
 
 $_SESSION["id_user"] = 5;
@@ -15,55 +16,106 @@ $id_user =  $_SESSION["id_user"];
 
 ?>
 <?php
-function uploadImage($file, $uploadsDir = 'uploads/', $maxSize = 2 * 1024 * 1024, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif']) {
+function uploadImage($file, $uploadsDir = 'uploads/', $maxSize = 2 * 1024 * 1024, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'])
+{
   if (isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-      $photoTmpName = $file['tmp_name'];
-      $photoName = basename($file['name']);
-      $photoSize = $file['size'];
-      $photoType = mime_content_type($photoTmpName);
+    $photoTmpName = $file['tmp_name'];
+    $photoName = basename($file['name']);
+    $photoSize = $file['size'];
+    $photoType = mime_content_type($photoTmpName);
 
-      // Vérification du type
-      if (!in_array($photoType, $allowedTypes)) {
-          return ['success' => false, 'message' => "Type de fichier non supporté. Veuillez utiliser JPEG, PNG ou GIF."];
-      }
+    // Vérification du type
+    if (!in_array($photoType, $allowedTypes)) {
+      return ['success' => false, 'message' => "Type de fichier non supporté. Veuillez utiliser JPEG, PNG ou GIF."];
+    }
 
-      // Vérification de la taille
-      if ($photoSize > $maxSize) {
-          return ['success' => false, 'message' => "Le fichier est trop volumineux. Limite de " . ($maxSize / (1024 * 1024)) . " Mo."];
-      }
+    // Vérification de la taille
+    if ($photoSize > $maxSize) {
+      return ['success' => false, 'message' => "Le fichier est trop volumineux. Limite de " . ($maxSize / (1024 * 1024)) . " Mo."];
+    }
 
-      // Création du chemin d'enregistrement avec un nom unique
-      $photoPath = $uploadsDir . uniqid() . '-' . $photoName;
-      // Déplacement du fichier
-      if (move_uploaded_file($photoTmpName, "../$photoPath")) {
-          return ['success' => true, 'filePath' => $photoPath];
-      } else {
-          return ['success' => false, 'message' => "Erreur lors de l'upload de l'image."];
-      }
+    // Création du chemin d'enregistrement avec un nom unique
+    $photoPath = $uploadsDir . uniqid() . '-' . $photoName;
+    // Déplacement du fichier
+    if (move_uploaded_file($photoTmpName, "../$photoPath")) {
+      return ['success' => true, 'filePath' => $photoPath];
+    } else {
+      return ['success' => false, 'message' => "Erreur lors de l'upload de l'image."];
+    }
   } else {
-      return ['success' => false, 'message' => "Aucun fichier sélectionné ou erreur lors de l'upload."];
+    return ['success' => false, 'message' => "Aucun fichier sélectionné ou erreur lors de l'upload."];
   }
 }
+
+
+
+
+
+
+
+
+
+
 // AJout d article 
 if (($_SERVER["REQUEST_METHOD"] == 'POST') && (isset($_POST["addArticle"]))) {
- if (empty($_POST['id_theme']) && empty($_POST['articleTitle']) && empty($_POST['articleContent'])) {
+  if (empty($_POST['id_theme']) && empty($_POST['articleTitle']) && empty($_POST['articleContent'])) {
     echo "veuillez remplir les champs ";
   } else {
-
     $uploadResult = uploadImage($_FILES['urlPhoto']);
     $urlPhoto = $uploadResult['filePath'];
     $newArticle = new Article($dbManager,  0, $_POST['articleTitle'],  $_POST['articleContent'], $urlPhoto, intval($_POST['id_theme']),  $id_user);
     $result = $newArticle->add();
-
+    $id_article = $dbManager->getLastInsertId() ;
+    // echo("id_article") ; 
+    // var_dump($id_article);
     if ($result) {
-      echo "Ajout article ";
-    } else {
-      echo "non ajout  ";
+    
+      if (!empty($_POST['tags'])) {
+        // Nettoyage et traitement des tags
+        $tags_input = htmlspecialchars(trim($_POST['tags']));
+        $tags = array_unique(array_filter(array_map('trim', explode(',', $tags_input))));
+    
+        foreach ($tags as $tag_name) {
+            var_dump($tag_name); // Debug: Afficher le tag traité
+            $tag = new Tag($dbManager, 0, $tag_name);
+            // Vérifier si le tag existe
+            $objetTag = $tag->getTagByName();
+            if ($objetTag === null) {
+                // Le tag n'existe pas, le créer
+                $tag->add();
+                $tag_id = $dbManager->getLastInsertId();
+            } else {
+                // Le tag existe, récupérer son ID
+                $tag_id = $objetTag->id_tag;
+            }
+    
+            // Ajouter la relation entre l'article et le tag
+            $tag_article = new ArticleTags($dbManager , $id_article, $tag_id)  ; 
+            $tag_article->linkTagToArticle();
+        }
     }
-
+      else {
+      echo " l article n est pas ajouté";
+    }
   }
-  die();
 }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // edit
 if (isset($_POST["edit"])) {
   $actionEdit = true;
@@ -98,7 +150,7 @@ if (isset($_POST["edit"])) {
 
 
     <div>
-      <form method="POST" action=""  enctype="multipart/form-data">
+      <form method="POST" action="" enctype="multipart/form-data">
         <!-- Article Writing Section -->
         <div id="writeSection" class="space-y-6">
           <div class="space-y-4">
@@ -128,32 +180,23 @@ if (isset($_POST["edit"])) {
               <label class="block text-sm font-medium text-gray-700 mb-2">Contenu de l'article</label>
               <textarea id="articleContent" name="articleContent" class="w-full h-64 p-3 border rounded-lg resize-none" placeholder="Rédigez votre article..."></textarea>
             </div>
-           <!-- img -->
-           <div>
-                    <label for="urlPhoto" class="block text-sm font-medium text-gray-700 mb-2">Photo</label>
-                    <input id="urlPhoto" name="urlPhoto" type="file" accept="image/*" class="w-full p-3 border rounded-lg" >
+            <!-- img -->
+            <div>
+              <label for="urlPhoto" class="block text-sm font-medium text-gray-700 mb-2">Photo</label>
+              <input id="urlPhoto" name="urlPhoto" type="file" accept="image/*" class="w-full p-3 border rounded-lg">
             </div>
             <!-- Tags -->
-            <div>
+            <div class="">
               <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-              <div id="tagsContainer" name="tagsContainer" class="flex flex-wrap gap-2 mb-4"></div>
+              <input type="text" class="w-full p-3 border rounded-lg" id="tags-input" name="tags-input" placeholder="Add a tag and press Enter">
             </div>
+            <div class="tag-container" id="tag-container"></div>
+            <input type="hidden" name="tags" id="tags">
+
 
           </div>
         </div>
 
-        <!-- Tags Management Section -->
-        <div id="tagsSection" class=" space-y-6 my-8">
-          <div class="flex gap-2 mb-4">
-            <input type="text" id="newTagInput" class="flex-1 p-2 border rounded-lg" placeholder="Nouveau tag">
-            <button onclick="addTag()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              Ajouter
-            </button>
-          </div>
-          <div id="existingTags" class="grid grid-cols-2 md:grid-cols-3 gap-2">
-            <!-- Ajout tag --->
-          </div>
-        </div>
 
 
 
@@ -170,3 +213,39 @@ if (isset($_POST["edit"])) {
 $content = ob_get_clean();
 include('layout.php');
 ?>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tagsInput = document.getElementById('tags-input');
+    const tagsContainer = document.getElementById('tag-container');
+    const tagsHiddenInput = document.getElementById('tags');
+    let tags = [];
+
+    tagsInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const tagValue = tagsInput.value.trim();
+        if (tagValue && !tags.includes(tagValue)) {
+          tags.push(tagValue);
+          const tagElement = document.createElement('div');
+          tagElement.classList.add('tag');
+          tagElement.textContent = tagValue;
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'x';
+          removeButton.addEventListener('click', () => {
+            tags = tags.filter(tag => tag !== tagValue);
+            tagsContainer.removeChild(tagElement);
+            updateTagsInput();
+          });
+          tagElement.appendChild(removeButton);
+          tagsContainer.appendChild(tagElement);
+          tagsInput.value = '';
+          updateTagsInput();
+        }
+      }
+    });
+
+    function updateTagsInput() {
+      tagsHiddenInput.value = tags.join(',');
+    }
+  });
+</script>

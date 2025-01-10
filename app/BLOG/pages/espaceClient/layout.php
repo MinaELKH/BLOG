@@ -17,8 +17,6 @@
   <script src='../../../../public/js/burger.js' defer></script>
 
     <link rel="stylesheet" href="../../../../public/css/style.css" />
-    public\css\style.css
-  
   <style>
    body {
             font-family: 'Nunito', sans-serif;
