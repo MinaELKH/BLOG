@@ -52,13 +52,9 @@ CREATE TABLE comments (
 
 -- Table: favorites
 CREATE TABLE favorites (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_favorite INT NOT NULL AUTO_INCREMENT UNIQUE,
     id_user INT NOT NULL,
     id_article INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    archive TINYINT(1) DEFAULT 0,
-    FOREIGN KEY (id_user) REFERENCES users(id_user),
-    FOREIGN KEY (id_article) REFERENCES articles(id_article)
+    PRIMARY KEY (id_user, id_article)
 );
-
-

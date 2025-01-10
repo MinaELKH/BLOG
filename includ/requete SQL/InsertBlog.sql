@@ -95,3 +95,26 @@ VALUES
 ('L\'avenir semble prometteur, mais il reste encore beaucoup à faire pour l\'écologie.', 10, 9, 0),
 ('Intéressant, mais je me demande si les technologies seront accessibles à tous.', 10, 3, 0),
 ('J\'espère que les voitures autonomes seront sûres!', 10, 3, 0);
+
+
+
+INSERT INTO favorites (id_user, id_article) VALUES (1, 1);
+INSERT INTO favorites (id_user, id_article) VALUES (2, 3);
+INSERT INTO favorites (id_user, id_article) VALUES (3, 5);
+INSERT INTO favorites (id_user, id_article) VALUES (4, 7);
+INSERT INTO favorites (id_user, id_article) VALUES (5, 9);
+INSERT INTO favorites (id_user, id_article) VALUES (6, 2);
+INSERT INTO favorites (id_user, id_article) VALUES (7, 4);
+INSERT INTO favorites (id_user, id_article) VALUES (8, 6);
+INSERT INTO favorites (id_user, id_article) VALUES (9, 8);
+INSERT INTO favorites (id_user, id_article) VALUES (10, 10);
+INSERT INTO favorites (id_user, id_article) VALUES (1, 2);
+INSERT INTO favorites (id_user, id_article) VALUES (2, 4);
+INSERT INTO favorites (id_user, id_article) VALUES (3, 6);
+INSERT INTO favorites (id_user, id_article) VALUES (4, 8);
+INSERT INTO favorites (id_user, id_article) VALUES (5, 10);
+INSERT INTO favorites (id_user, id_article) VALUES (6, 1);
+INSERT INTO favorites (id_user, id_article) VALUES (7, 3);
+INSERT INTO favorites (id_user, id_article) VALUES (8, 5);
+INSERT INTO favorites (id_user, id_article) VALUES (9, 7);
+INSERT INTO favorites (id_user, id_article) VALUES (10, 9);

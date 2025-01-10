@@ -9,8 +9,11 @@ use Models\Comment;
 use Models\DatabaseManager;
 
 $_SESSION['id_user'] = 5;
-$dbManager = new DatabaseManager();
 $id_user = $_SESSION['id_user'];
+
+
+$dbManager = new DatabaseManager();
+
 
 if (isset($_POST["addComment"])) {
     $newComment = new Comment($dbManager, 0, $_POST['commentaire'], intval($_POST['id_article']), intval($id_user));
@@ -61,7 +64,7 @@ if (isset($_POST["deleteComment"])) {
     <main class="container mx-auto px-4 py-8 relative">
     <form method="POST" action="">
         <?php
-        if ($_SERVER["METHOD_REQUEST"] = "POST"  && (isset($_POST["id_article"]))) :
+        if ($_SERVER["METHOD_REQUEST"] = "POST"   && (isset($_POST["id_article"]))) :
             $id_article = $_POST["id_article"];
             $newArticle = new Article($dbManager, $id_article);
             $objet = $newArticle->getDetailArticle();
