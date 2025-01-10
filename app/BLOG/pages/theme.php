@@ -7,9 +7,17 @@ use Models\DatabaseManager;
 use Models\ArticleTags;
 use Models\Favorite;
 
+session_start() ;
+ if ($_SESSION['id_role'] == 1 ) { // client ou visiteur
+    header("location: erreur.php");
+   exit;
+} else if ( $_SESSION['id_role'] == 21) { // admin ou superAdmin
+     $id_user = $_SESSION['id_user'];
+ }
 
-$_SESSION['id_user'] = 5;
-$id_user = $_SESSION['id_user']; 
+
+// $_SESSION['id_user'] = 5;
+// $id_user = $_SESSION['id_user']; 
 
 
 $dbManager = new DatabaseManager();

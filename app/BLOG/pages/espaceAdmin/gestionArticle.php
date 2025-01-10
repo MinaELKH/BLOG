@@ -2,12 +2,12 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/locationVoiture/autoload.php';
 ob_start();
 session_start() ;
-// if ($_SESSION['id_role'] != 1 ) { // client ou visiteur
-//     header("location: erreur.php");
-//     exit;
-// } else if ( $_SESSION['id_role'] == 1) { // admin ou superAdmin
-//     $id_user = $_SESSION['id_user'];
-// }
+ if ($_SESSION['id_role'] != 1 ) { // client ou visiteur
+    header("location: erreur.php");
+   exit;
+} else if ( $_SESSION['id_role'] == 1) { // admin ou superAdmin
+     $id_user = $_SESSION['id_user'];
+ }
 
 use Models\Article;
 use Models\DatabaseManager;
